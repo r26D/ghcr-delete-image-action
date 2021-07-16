@@ -8,10 +8,10 @@ async function run() {
     const config = utils.getConfig();
     const octokit = github.getOctokit(config.token, {
       log: {
-        debug: () => console.info,
-        info: () => console.info,
-        warn: console.warn,
-        error: console.error
+        debug: () => core.info,
+        info: () => core.info,
+        warn: core.info,
+        error: core.error
       },
     });
 
