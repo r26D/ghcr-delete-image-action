@@ -6,7 +6,14 @@ const actions = require("./actions");
 async function run() {
   try {
     const config = utils.getConfig();
-    const octokit = github.getOctokit(config.token);
+    const octokit = github.getOctokit(config.token, {
+      log: {
+        debug: () => console.info,
+        info: () => console.info,
+        warn: console.warn,
+        error: console.error
+      },
+    });
 
     if (config.tag) {
       await actions.deleteByTag(config, octokit);
