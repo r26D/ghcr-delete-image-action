@@ -47,7 +47,7 @@ let getConfig = function () {
     ) {
       throw new Error("tagged-keep-latest is not number");
     }
-    if (!tagRegex)
+    if (!config.tagRegex)
       throw new Error("regex must be provided when tagged-keep-latest set");
   }
 
