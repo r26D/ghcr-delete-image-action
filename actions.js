@@ -49,4 +49,31 @@ async function deleteUntaggedOrderGreaterThan(config, octokit) {
   core.endGroup();
 }
 
-module.exports = { deleteByTag, deleteUntaggedOrderGreaterThan };
+async function deleteTagRegexMatchOrderGreaterThan(config, octokit) {
+  core.info(`🔎 find not latest ${config.untaggedKeepLatest} packages...`);
+
+  const pkgs = await utils.findPackageVersionsTagRegexMatchOrderGreaterThan(
+    octokit,
+    config.owner,
+    config.name,
+    config.taggedKeepLatest,
+    new RegExp(config.tagRegex)
+  );
+
+  core.startGroup(`🗑 delete ${pkgs.length} packages`);
+
+  for (const pkg of pkgs) {
+    await utils.deletePackageVersion(
+      octokit,
+      config.owner,
+      config.name,
+      pkg.id
+    );
+
+    core.info(`✅ package #${pkg.id} deleted.`);
+  }
+
+  core.endGroup();
+}
+
+module.exports = { deleteByTag, deleteUntaggedOrderGreaterThan, deleteTagRegexMatchOrderGreaterThan };

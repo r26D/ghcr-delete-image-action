@@ -14,19 +14,24 @@ let getConfig = function () {
     tag: core.getInput("tag") || null,
     untaggedKeepLatest: core.getInput("untagged-keep-latest") || null,
     untaggedOlderThan: core.getInput("untagged-older-than") || null,
+    taggedKeepLatest: core.getInput("tagged-keep-latest") || null,
+    tagRegex: core.getInput("tag-regex") || null,
   };
 
   const definedOptionsCount = [
     config.tag,
     config.untaggedKeepLatest,
     config.untaggedOlderThan,
+    config.taggedKeepLatest,
+    config.tagRegex
   ].filter((x) => x !== null).length;
 
   if (definedOptionsCount == 0) {
     throw new Error("no any required options defined");
-  } else if (definedOptionsCount > 1) {
-    throw new Error("too many selectors defined, use only one");
-  }
+  } 
+  // else if (definedOptionsCount > 1) {
+  //   throw new Error("too many selectors defined, use only one");
+  // }
 
   if (config.untaggedKeepLatest) {
     if (
@@ -34,6 +39,16 @@ let getConfig = function () {
     ) {
       throw new Error("untagged-keep-latest is not number");
     }
+  }
+
+  if (config.taggedKeepLatest) {
+    if (
+      isNaN((config.taggedKeepLatest = parseInt(config.taggedKeepLatest)))
+    ) {
+      throw new Error("tagged-keep-latest is not number");
+    }
+    if (!tagRegex)
+      throw new Error("regex must be provided when tagged-keep-latest set");
   }
 
   if (config.untaggedOlderThan) {
@@ -81,6 +96,34 @@ let findPackageVersionsUntaggedOrderGreaterThan = async function (
     const versionTags = pkgVer.metadata.container.tags;
     if (versionTags.length == 0) {
       pkgs.push(pkgVer);
+    }
+  }
+
+  pkgs.sort((a, b) => {
+    return new Date(b.updated_at) - new Date(a.updated_at);
+  });
+
+  return pkgs.slice(n);
+};
+
+let findPackageVersionsTagRegexMatchOrderGreaterThan = async function (
+  octokit,
+  owner,
+  name,
+  n,
+  regex
+) {
+  const pkgs = [];
+
+  for await (const pkgVer of iteratePackageVersions(octokit, owner, name)) {
+    const versionTags = pkgVer.metadata.container.tags;
+    if (regex && versionTags.length > 0) { 
+      for (tag in versionTags) {
+        if (!regex.test(regex)) 
+          continue;
+        pkgs.push(pkgVer);
+        break;
+      }
     }
   }
 

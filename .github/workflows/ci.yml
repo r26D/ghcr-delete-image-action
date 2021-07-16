@@ -50,7 +50,7 @@ jobs:
           build-args: |
             RUN_NUMBER=${{ github.run_number }}-0
           tags: |
-            ghcr.io/${{ github.repository_owner }}/ghcr-delete-image-dummy:untagged
+            ghcr.io/${{ github.repository_owner }}/ghcr-delete-image-dummy:testtag-1
 
       - name: Build and Push Dummy Image - 1
         uses: docker/build-push-action@v2
@@ -61,7 +61,7 @@ jobs:
           build-args: |
             RUN_NUMBER=${{ github.run_number }}-1
           tags: |
-            ghcr.io/${{ github.repository_owner }}/ghcr-delete-image-dummy:untagged
+            ghcr.io/${{ github.repository_owner }}/ghcr-delete-image-dummy:testtag-2
 
       - name: Build and Push Dummy Image - 2
         uses: docker/build-push-action@v2
@@ -72,44 +72,12 @@ jobs:
           build-args: |
             RUN_NUMBER=${{ github.run_number }}-2
           tags: |
-            ghcr.io/${{ github.repository_owner }}/ghcr-delete-image-dummy:untagged
+            ghcr.io/${{ github.repository_owner }}/ghcr-delete-image-dummy:testtag-3
 
       - uses: ./
         with:
-          owner: bots-house
+          owner: dmcconnell-m
           name: ghcr-delete-image-dummy
-          token: ${{ secrets.GCR_TOKEN }}
-          untagged-keep-latest: 1
-
-  test-actions-delete-by-tag:
-    name: Test action delete by tag
-    runs-on: ubuntu-latest
-    needs: [test-code]
-    permissions:
-      packages: write
-      contents: read
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and Push Dummy Image
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          file: Dockerfile.dummy
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/ghcr-delete-image-dummy:${{ github.run_number }}
-
-      - uses: ./
-        with:
-          owner: bots-house
-          name: ghcr-delete-image-dummy
-          token: ${{ secrets.GCR_TOKEN }}
-          tag: ${{ github.run_number }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tagged-keep-latest: 1
+          tag-regex: /testtag-./g

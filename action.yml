@@ -41,6 +41,15 @@ inputs:
       Delete all untagged images older than N in days.
     required: false
   
+  tag-regex:
+    description: > 
+      regex to apply to tags. images will be included if ANY of the tags match the entered regex. If this is set, tagged-keep-latest must also be set
+    required: false
+
+  tagged-keep-latest:
+    description: > 
+      Delete all tagged images matching tag-regex except the last N. if this is set, tag-regex must also be set
+    required: false
 
 runs:
   using: 'node12'
