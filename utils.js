@@ -150,6 +150,7 @@ let iteratePackageVersions = async function* (octokit, owner, name) {
     }
   )) {
     for (let packageVersion of response.data) {
+      core.info('found package!');
       yield packageVersion;
     }
   }
