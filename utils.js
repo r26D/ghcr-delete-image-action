@@ -114,9 +114,10 @@ let findPackageVersionsTagRegexMatchOrderGreaterThan = async function (
   regex
 ) {
   const pkgs = [];
-
-  for await (const pkgVer of iteratePackageVersions(octokit, owner, name)) {
-
+  const pkgVers = await iteratePackageVersions(octokit, owner, name);
+  core.info(`🔎 found ${pkgVers.length} versions...`);
+  for (const pkgVer of pkgVers) {
+    core.info(`🔎 found pkgVer ${pkgVer.metadata.container.tags}...`);
     const versionTags = pkgVer.metadata.container.tags;
     if (regex && versionTags.length > 0) { 
       for (tag in versionTags) {
