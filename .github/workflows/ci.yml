@@ -74,7 +74,7 @@ jobs:
 
       - uses: ./
         with:
-          owner: dmcconnell-m
+          owner: ${{ github.repository_owner }}
           name: ghcr-delete-image-dummy
           token: ${{ secrets.GHCR_TOKEN }}
           tagged-keep-latest: 1
