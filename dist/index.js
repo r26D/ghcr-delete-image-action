@@ -6294,6 +6294,7 @@ module.exports = {
   findPackageVersionByTag,
   deletePackageVersion,
   findPackageVersionsUntaggedOrderGreaterThan,
+  findPackageVersionsTagRegexMatchOrderGreaterThan,
   sleep,
 };
 
