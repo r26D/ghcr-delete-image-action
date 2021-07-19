@@ -133,7 +133,7 @@ let findPackageVersionsTagRegexMatchOrderGreaterThan = async function (
         pkgs.push(pkgVer);
         break;
       }
-    } else if (versionTags.length === 0 && untaggedKeepLatest >= 0) {
+    } else if (!isNaN(untaggedKeepLatest)) {
       untaggedPkgs.push(pkgVer);
     }
   }
@@ -148,15 +148,13 @@ let findPackageVersionsTagRegexMatchOrderGreaterThan = async function (
   const pkgsToDelete = [];
   if (pkgs.length > 0) {
     core.info(`🔎  ${pkgs.length} tagged packages to delete. Taking top ${taggedKeepLatest}...`);
-    const pkgToRemove = pkgs.slice(taggedKeepLatest);
-    core.info(`🔎  ${pkgToRemove.length} tagged packages to delete...`);
-    for (let pkg of pkgToRemove)
+    for (let pkg of pkgs.slice(taggedKeepLatest))
       pkgsToDelete.push(pkg);
   }
   if (untaggedPkgs.length > 0) {
     core.info(`🔎  ${untaggedPkgs.length} untagged packages to delete. Taking top ${untaggedKeepLatest}...`);
-    untaggedPkgs.slice(untaggedKeepLatest);
-    pkgsToDelete.push.apply(untaggedPkgs);
+    for (let pkg of untaggedPkgs.slice(untaggedKeepLatest))
+      pkgsToDelete.push(pkg);
   }
   core.info(`🔎  ${pkgsToDelete.length} total packages to delete...`);
   return pkgsToDelete;
