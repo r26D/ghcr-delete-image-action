@@ -6145,11 +6145,7 @@ let findPackageVersionsTagRegexMatchOrderGreaterThan = async function (
     const versionTags = pkgVer.metadata.container.tags;
     if (regex && versionTags.length > 0) {
       for (let tag of versionTags) {
-        core.info(`🔎 found tag ${tag}...`);
-
         if (!regex.test(tag)) {
-          core.info(`🔎 tag ${tag} does not match. Ignoring`);
-        
           continue;
         }
         core.info(`🔎 tag ${tag} matches. Deleting...`);
@@ -6170,12 +6166,12 @@ let findPackageVersionsTagRegexMatchOrderGreaterThan = async function (
   });
   const pkgsToDelete = [];
   if (pkgs.length > 0) {
-    core.info(`🔎  ${pkgs.length} tagged packages to delete. Taking top ${taggedKeepLatest}...`);
+    core.info(`🔎  ${pkgs.length} tagged packages to delete. Keeping top ${taggedKeepLatest}...`);
     for (let pkg of pkgs.slice(taggedKeepLatest))
       pkgsToDelete.push(pkg);
   }
   if (untaggedPkgs.length > 0) {
-    core.info(`🔎  ${untaggedPkgs.length} untagged packages to delete. Taking top ${untaggedKeepLatest}...`);
+    core.info(`🔎  ${untaggedPkgs.length} untagged packages to delete. Keeping top ${untaggedKeepLatest}...`);
     for (let pkg of untaggedPkgs.slice(untaggedKeepLatest))
       pkgsToDelete.push(pkg);
   }
