@@ -7,53 +7,6 @@ require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 const utils = __nccwpck_require__(349);
 const core = __nccwpck_require__(127);
 
-async function deleteByTag(config, octokit) {
-  core.info(`🔎 search package version with tag ${config.tag}...`);
-
-  const packageVersion = await utils.findPackageVersionByTag(
-    octokit,
-    config.owner,
-    config.name,
-    config.tag
-  );
-
-  core.info(`🆔 package id is #${packageVersion.id}, delete it...`);
-
-  await utils.deletePackageVersion(
-    octokit,
-    config.owner,
-    config.name,
-    packageVersion.id
-  );
-
-  core.info(`✅ package #${packageVersion.id} deleted.`);
-}
-
-async function deleteUntaggedOrderGreaterThan(config, octokit) {
-  core.info(`🔎 find not latest ${config.untaggedKeepLatest} packages...`);
-
-  const pkgs = await utils.findPackageVersionsUntaggedOrderGreaterThan(
-    octokit,
-    config.owner,
-    config.name,
-    config.untaggedKeepLatest
-  );
-
-  core.startGroup(`🗑 delete ${pkgs.length} packages`);
-
-  for (const pkg of pkgs) {
-    await utils.deletePackageVersion(
-      octokit,
-      config.owner,
-      config.name,
-      pkg.id
-    );
-
-    core.info(`✅ package #${pkg.id} deleted.`);
-  }
-
-  core.endGroup();
-}
 
 async function deleteTagRegexMatchOrderGreaterThan(config, octokit) {
   core.info(`🔎 finding latest tagged ${config.taggedKeepLatest} packages matching regex ${config.tagRegex}. Also finding latest untagged ${config.untaggedKeepLatest} packages...`);
@@ -83,7 +36,7 @@ async function deleteTagRegexMatchOrderGreaterThan(config, octokit) {
   core.endGroup();
 }
 
-module.exports = { deleteByTag, deleteUntaggedOrderGreaterThan, deleteTagRegexMatchOrderGreaterThan };
+module.exports = { deleteTagRegexMatchOrderGreaterThan };
 
 
 /***/ }),
@@ -6134,18 +6087,14 @@ let getConfig = function () {
     name: core.getInput("name", { required: true }),
     token: core.getInput("token", { required: true }),
 
-    // optional, mutual exclusive options
-    tag: core.getInput("tag") || null,
     untaggedKeepLatest: core.getInput("untagged-keep-latest") || null,
-    untaggedOlderThan: core.getInput("untagged-older-than") || null,
     taggedKeepLatest: core.getInput("tagged-keep-latest") || null,
     tagRegex: core.getInput("tag-regex") || null
   };
 
   const definedOptionsCount = [
-    config.tag,
+    
     config.untaggedKeepLatest,
-    config.untaggedOlderThan,
     config.taggedKeepLatest,
     config.tagRegex
   ].filter((x) => x !== null).length;
@@ -6175,60 +6124,10 @@ let getConfig = function () {
       throw new Error("regex must be provided when tagged-keep-latest set");
   }
 
-  if (config.untaggedOlderThan) {
-    if (
-      isNaN((config.untaggedOlderThan = parseInt(config.untaggedOlderThan)))
-    ) {
-      throw new Error("untagged-older-than is not number");
-    }
-  }
-
   return config;
 };
 
-let findPackageVersionByTag = async function (octokit, owner, name, tag) {
-  const tags = new Set();
 
-  for await (const pkgVer of iteratePackageVersions(octokit, owner, name)) {
-    const versionTags = pkgVer.metadata.container.tags;
-
-    if (versionTags.includes(tag)) {
-      return pkgVer;
-    } else {
-      versionTags.map((item) => {
-        tags.add(item);
-      });
-    }
-  }
-
-  throw new Error(
-    `package with tag '${tag}' does not exits, available tags: ${Array.from(
-      tags
-    ).join(", ")}`
-  );
-};
-
-let findPackageVersionsUntaggedOrderGreaterThan = async function (
-  octokit,
-  owner,
-  name,
-  n
-) {
-  const pkgs = [];
-
-  for await (const pkgVer of iteratePackageVersions(octokit, owner, name)) {
-    const versionTags = pkgVer.metadata.container.tags;
-    if (versionTags.length == 0) {
-      pkgs.push(pkgVer);
-    }
-  }
-
-  pkgs.sort((a, b) => {
-    return new Date(b.updated_at) - new Date(a.updated_at);
-  });
-
-  return pkgs.slice(n);
-};
 
 let findPackageVersionsTagRegexMatchOrderGreaterThan = async function (
   octokit,
@@ -6318,9 +6217,7 @@ function sleep(ms) {
 
 module.exports = {
   getConfig,
-  findPackageVersionByTag,
   deletePackageVersion,
-  findPackageVersionsUntaggedOrderGreaterThan,
   findPackageVersionsTagRegexMatchOrderGreaterThan,
   sleep,
 };
@@ -6495,8 +6392,6 @@ async function run() {
         error: core.error
       },
     });
-
-
 
     await actions.deleteTagRegexMatchOrderGreaterThan(config, octokit);
 

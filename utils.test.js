@@ -21,7 +21,7 @@ describe("getConfig", () => {
   });
 
   const sharedRequiredOpts = {
-    INPUT_OWNER: "bots-house",
+    INPUT_OWNER: "machship",
     INPUT_NAME: "ghcr-delete-image-action",
     INPUT_TOKEN: "some-token",
   };
@@ -34,7 +34,7 @@ describe("getConfig", () => {
       },
       () => {
         expect(utils.getConfig()).toStrictEqual({
-          owner: "bots-house",
+          owner: "machship",
           name: "ghcr-delete-image-action",
           token: "some-token",
           tag: "latest",
@@ -102,60 +102,3 @@ describe("getConfig", () => {
   });
 });
 
-describe("findPackageVersionByTag", () => {
-  const token = process.env["INTEGRATION_TEST_TOKEN"];
-  expect(token).toBeTruthy();
-
-  const octokit = github.getOctokit(token);
-
-  test("existing version returns object", async () => {
-    const packageVersion = await utils.findPackageVersionByTag(
-      octokit,
-      "bots-house",
-      "docker-telegram-bot-api",
-      "fbb8b4c-b21d667"
-    );
-    expect(packageVersion.id).toBe(266441);
-  }, 15000);
-
-  test("not existing version throw error", () => {
-    return expect(
-      utils.findPackageVersionByTag(
-        octokit,
-        "bots-house",
-        "docker-telegram-bot-api",
-        "test"
-      )
-    ).rejects.toThrow(new RegExp("package with tag"));
-  });
-});
-
-describe("findPackageVersionsUntaggedOrderGreaterThan", () => {
-  const token = process.env["INTEGRATION_TEST_TOKEN"];
-  expect(token).toBeTruthy();
-
-  const octokit = github.getOctokit(token);
-
-  test("returns greater than 5 objects", async () => {
-    const pkgs = await utils.findPackageVersionsUntaggedOrderGreaterThan(
-      octokit,
-      "bots-house",
-      "docker-telegram-bot-api",
-      2
-    );
-
-    expect(pkgs.length).toBeGreaterThanOrEqual(5);
-    // expect(packageVersion.id).toBe(266441);
-  }, 15000);
-
-  // test("not existing version throw error", () => {
-  //   return expect(
-  //     utils.findPackageVersionByTag(
-  //       octokit,
-  //       "bots-house",
-  //       "docker-telegram-bot-api",
-  //       "test"
-  //     )
-  //   ).rejects.toThrow(new RegExp("package with tag"));
-  // });
-});

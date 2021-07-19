@@ -15,8 +15,6 @@ async function run() {
       },
     });
 
-
-
     await actions.deleteTagRegexMatchOrderGreaterThan(config, octokit);
 
   } catch (error) {

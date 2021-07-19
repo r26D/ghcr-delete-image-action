@@ -10,18 +10,14 @@ let getConfig = function () {
     name: core.getInput("name", { required: true }),
     token: core.getInput("token", { required: true }),
 
-    // optional, mutual exclusive options
-    tag: core.getInput("tag") || null,
     untaggedKeepLatest: core.getInput("untagged-keep-latest") || null,
-    untaggedOlderThan: core.getInput("untagged-older-than") || null,
     taggedKeepLatest: core.getInput("tagged-keep-latest") || null,
     tagRegex: core.getInput("tag-regex") || null
   };
 
   const definedOptionsCount = [
-    config.tag,
+    
     config.untaggedKeepLatest,
-    config.untaggedOlderThan,
     config.taggedKeepLatest,
     config.tagRegex
   ].filter((x) => x !== null).length;
@@ -51,60 +47,10 @@ let getConfig = function () {
       throw new Error("regex must be provided when tagged-keep-latest set");
   }
 
-  if (config.untaggedOlderThan) {
-    if (
-      isNaN((config.untaggedOlderThan = parseInt(config.untaggedOlderThan)))
-    ) {
-      throw new Error("untagged-older-than is not number");
-    }
-  }
-
   return config;
 };
 
-let findPackageVersionByTag = async function (octokit, owner, name, tag) {
-  const tags = new Set();
 
-  for await (const pkgVer of iteratePackageVersions(octokit, owner, name)) {
-    const versionTags = pkgVer.metadata.container.tags;
-
-    if (versionTags.includes(tag)) {
-      return pkgVer;
-    } else {
-      versionTags.map((item) => {
-        tags.add(item);
-      });
-    }
-  }
-
-  throw new Error(
-    `package with tag '${tag}' does not exits, available tags: ${Array.from(
-      tags
-    ).join(", ")}`
-  );
-};
-
-let findPackageVersionsUntaggedOrderGreaterThan = async function (
-  octokit,
-  owner,
-  name,
-  n
-) {
-  const pkgs = [];
-
-  for await (const pkgVer of iteratePackageVersions(octokit, owner, name)) {
-    const versionTags = pkgVer.metadata.container.tags;
-    if (versionTags.length == 0) {
-      pkgs.push(pkgVer);
-    }
-  }
-
-  pkgs.sort((a, b) => {
-    return new Date(b.updated_at) - new Date(a.updated_at);
-  });
-
-  return pkgs.slice(n);
-};
 
 let findPackageVersionsTagRegexMatchOrderGreaterThan = async function (
   octokit,
@@ -194,9 +140,7 @@ function sleep(ms) {
 
 module.exports = {
   getConfig,
-  findPackageVersionByTag,
   deletePackageVersion,
-  findPackageVersionsUntaggedOrderGreaterThan,
   findPackageVersionsTagRegexMatchOrderGreaterThan,
   sleep,
 };

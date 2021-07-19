@@ -1,8 +1,5 @@
 # ghcr-delete-image
 
-[![CI](https://github.com/bots-house/ghcr-delete-image-action/actions/workflows/ci.yml/badge.svg)](https://github.com/bots-house/ghcr-delete-image-action/actions/workflows/ci.yml)
-[![wakatime](https://wakatime.com/badge/github/bots-house/ghcr-delete-image-action.svg)](https://wakatime.com/badge/github/bots-house/ghcr-delete-image-action)
-
 Delete image from [Github Container Registry](https://github.com/features/packages) by tag. 
 Useful for cleanup of pull request scoped images. 
 
@@ -24,12 +21,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Delete image
-        uses: bots-house/ghcr-delete-image-action@v1.0.0
+        uses: ./
         with:
-          # NOTE: at now only orgs is supported
-          owner: bots-house
-          name: some-web-service
-          # NOTE: using Personal Access Token
-          token: ${{ secrets.PAT }}
-          tag: pr-${{github.event.pull_request.number}}
+          owner: ${{ github.repository_owner }}
+          name: ghcr-delete-image-dummy
+          token: ${{ secrets.GHCR_TOKEN }}
+          tagged-keep-latest: 1
+          untagged-keep-latest: 1
+          tag-regex: testtag-.
 ```
