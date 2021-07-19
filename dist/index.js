@@ -6272,9 +6272,9 @@ let findPackageVersionsTagRegexMatchOrderGreaterThan = async function (
   const pkgsToDelete = [];
   if (pkgs.length > 0) {
     core.info(`🔎  ${pkgs.length} tagged packages to delete. Taking top ${taggedKeepLatest}...`);
-    pkgs.slice(taggedKeepLatest);
-    core.info(`🔎  ${pkgs.length} tagged packages to delete...`);
-    pkgsToDelete.push.apply(pkgs);
+    const pkgToRemove = pkgs.slice(taggedKeepLatest);
+    core.info(`🔎  ${pkgToRemove.length} tagged packages to delete...`);
+    pkgsToDelete.push.apply(pkgToRemove);
   }
   if (untaggedPkgs.length > 0) {
     core.info(`🔎  ${untaggedPkgs.length} untagged packages to delete. Taking top ${untaggedKeepLatest}...`);
