@@ -50,13 +50,14 @@ async function deleteUntaggedOrderGreaterThan(config, octokit) {
 }
 
 async function deleteTagRegexMatchOrderGreaterThan(config, octokit) {
-  core.info(`🔎 finding latest ${config.taggedKeepLatest} packages matching regex ${config.tagRegex}...`);
+  core.info(`🔎 finding latest tagged ${config.taggedKeepLatest} packages matching regex ${config.tagRegex}. Also finding latest untagged ${config.untaggedKeepLatest} packages...`);
 
   const pkgs = await utils.findPackageVersionsTagRegexMatchOrderGreaterThan(
     octokit,
     config.owner,
     config.name,
     config.taggedKeepLatest,
+    config.untaggedKeepLatest,
     new RegExp(config.tagRegex)
   );
 

@@ -56,13 +56,14 @@ async function deleteUntaggedOrderGreaterThan(config, octokit) {
 }
 
 async function deleteTagRegexMatchOrderGreaterThan(config, octokit) {
-  core.info(`🔎 finding latest ${config.taggedKeepLatest} packages matching regex ${config.tagRegex}...`);
+  core.info(`🔎 finding latest tagged ${config.taggedKeepLatest} packages matching regex ${config.tagRegex}. Also finding latest untagged ${config.untaggedKeepLatest} packages...`);
 
   const pkgs = await utils.findPackageVersionsTagRegexMatchOrderGreaterThan(
     octokit,
     config.owner,
     config.name,
     config.taggedKeepLatest,
+    config.untaggedKeepLatest,
     new RegExp(config.tagRegex)
   );
 
@@ -6138,7 +6139,7 @@ let getConfig = function () {
     untaggedKeepLatest: core.getInput("untagged-keep-latest") || null,
     untaggedOlderThan: core.getInput("untagged-older-than") || null,
     taggedKeepLatest: core.getInput("tagged-keep-latest") || null,
-    tagRegex: core.getInput("tag-regex") || null,
+    tagRegex: core.getInput("tag-regex") || null
   };
 
   const definedOptionsCount = [
@@ -6233,10 +6234,12 @@ let findPackageVersionsTagRegexMatchOrderGreaterThan = async function (
   octokit,
   owner,
   name,
-  n,
+  taggedKeepLatest,
+  untaggedKeepLatest,
   regex
 ) {
   const pkgs = [];
+  const untaggedPkgs = [];
   // const pkgVers = await iteratePackageVersions(octokit, owner, name);
   for await (const pkgVer of iteratePackageVersions(octokit, owner, name)) {
     core.info(`🔎 found pkgVer ${pkgVer.metadata.container.tags}...`);
@@ -6254,6 +6257,8 @@ let findPackageVersionsTagRegexMatchOrderGreaterThan = async function (
         pkgs.push(pkgVer);
         break;
       }
+    } else if (versionTags.length === 0 && untaggedKeepLatest >= 0) {
+      untaggedPkgs.push(pkgVer);
     }
   }
 
@@ -6261,7 +6266,16 @@ let findPackageVersionsTagRegexMatchOrderGreaterThan = async function (
     return new Date(b.updated_at) - new Date(a.updated_at);
   });
 
-  return pkgs.slice(n);
+  untaggedPkgs.sort((a, b) => {
+    return new Date(b.updated_at) - new Date(a.updated_at);
+  });
+  const pkgsToDelete = [];
+  if (pkgs.length > 0)
+    pkgsToDelete.push.apply(pkgs.slice(taggedKeepLatest));
+  if (untaggedPkgs.length > 0)
+    pkgsToDelete.push.apply(untaggedPkgs.slice(untaggedKeepLatest));
+
+  return pkgsToDelete;
 };
 
 let iteratePackageVersions = async function* (octokit, owner, name) {
@@ -6476,13 +6490,10 @@ async function run() {
       },
     });
 
-    if (config.tag) {
-      await actions.deleteByTag(config, octokit);
-    } else if (config.untaggedKeepLatest) {
-      await actions.deleteUntaggedOrderGreaterThan(config, octokit);
-    } else if (config.taggedKeepLatest && config.tagRegex) {
-      await actions.deleteTagRegexMatchOrderGreaterThan(config, octokit);
-    }
+
+
+    await actions.deleteTagRegexMatchOrderGreaterThan(config, octokit);
+
   } catch (error) {
     core.setFailed(error.message);
   }

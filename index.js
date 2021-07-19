@@ -15,13 +15,10 @@ async function run() {
       },
     });
 
-    if (config.tag) {
-      await actions.deleteByTag(config, octokit);
-    } else if (config.untaggedKeepLatest) {
-      await actions.deleteUntaggedOrderGreaterThan(config, octokit);
-    } else if (config.taggedKeepLatest && config.tagRegex) {
-      await actions.deleteTagRegexMatchOrderGreaterThan(config, octokit);
-    }
+
+
+    await actions.deleteTagRegexMatchOrderGreaterThan(config, octokit);
+
   } catch (error) {
     core.setFailed(error.message);
   }
