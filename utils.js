@@ -28,7 +28,7 @@ let getConfig = function () {
 
   if (definedOptionsCount == 0) {
     throw new Error("no any required options defined");
-  } 
+  }
   // else if (definedOptionsCount > 1) {
   //   throw new Error("too many selectors defined, use only one");
   // }
@@ -118,13 +118,16 @@ let findPackageVersionsTagRegexMatchOrderGreaterThan = async function (
   for await (const pkgVer of iteratePackageVersions(octokit, owner, name)) {
     core.info(`🔎 found pkgVer ${pkgVer.metadata.container.tags}...`);
     const versionTags = pkgVer.metadata.container.tags;
-    if (regex && versionTags.length > 0) { 
+    if (regex && versionTags.length > 0) {
       for (let tag of versionTags) {
         core.info(`🔎 found tag ${tag}...`);
 
-        if (!regex.test(tag)) 
+        if (!regex.test(tag)) {
+          core.info(`🔎 tag ${tag} does not match. Ignoring`);
+        
           continue;
-          core.info(`🔎 tag ${tag} matches. Deleting...`);
+        }
+        core.info(`🔎 tag ${tag} matches. Deleting...`);
         pkgs.push(pkgVer);
         break;
       }
