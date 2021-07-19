@@ -133,7 +133,7 @@ let findPackageVersionsTagRegexMatchOrderGreaterThan = async function (
         pkgs.push(pkgVer);
         break;
       }
-    } else if (!isNaN(untaggedKeepLatest)) {
+    } else if (versionTags.length === 0 && untaggedKeepLatest != null) {
       untaggedPkgs.push(pkgVer);
     }
   }
