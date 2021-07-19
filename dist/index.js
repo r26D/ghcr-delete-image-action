@@ -6270,11 +6270,15 @@ let findPackageVersionsTagRegexMatchOrderGreaterThan = async function (
     return new Date(b.updated_at) - new Date(a.updated_at);
   });
   const pkgsToDelete = [];
-  if (pkgs.length > 0)
+  if (pkgs.length > 0) {
+    core.info(`🔎  ${pkgs.length} tagged packages to delete...`);
     pkgsToDelete.push.apply(pkgs.slice(taggedKeepLatest));
-  if (untaggedPkgs.length > 0)
+  }
+  if (untaggedPkgs.length > 0) {
+    core.info(`🔎  ${untaggedPkgs.length} untagged packages to delete...`);
     pkgsToDelete.push.apply(untaggedPkgs.slice(untaggedKeepLatest));
-
+  }
+  core.info(`🔎  ${pkgsToDelete.length} total packages to delete...`);
   return pkgsToDelete;
 };
 
