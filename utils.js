@@ -148,11 +148,13 @@ let findPackageVersionsTagRegexMatchOrderGreaterThan = async function (
   const pkgsToDelete = [];
   if (pkgs.length > 0) {
     core.info(`🔎  ${pkgs.length} tagged packages to delete...`);
-    pkgsToDelete.push.apply(pkgs.slice(taggedKeepLatest));
+    pkgs.slice(taggedKeepLatest);
+    pkgsToDelete.push.apply(pkgs);
   }
   if (untaggedPkgs.length > 0) {
     core.info(`🔎  ${untaggedPkgs.length} untagged packages to delete...`);
-    pkgsToDelete.push.apply(untaggedPkgs.slice(untaggedKeepLatest));
+    untaggedPkgs.slice(untaggedKeepLatest);
+    pkgsToDelete.push.apply(untaggedPkgs);
   }
   core.info(`🔎  ${pkgsToDelete.length} total packages to delete...`);
   return pkgsToDelete;
