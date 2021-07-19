@@ -72,6 +72,16 @@ jobs:
             RUN_NUMBER=${{ github.run_number }}-2
           tags: |
             ghcr.io/${{ github.repository_owner }}/ghcr-delete-image-dummy:testtag-3
+      - name: Build and Push Dummy Image - No tags
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          file: Dockerfile.dummy
+          build-args: |
+            RUN_NUMBER=${{ github.run_number }}-NOTAGS
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/ghcr-delete-image-dummy
 
       - uses: ./
         with:
