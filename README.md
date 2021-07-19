@@ -1,20 +1,21 @@
 # ghcr-delete-image
 
-Delete image from [Github Container Registry](https://github.com/features/packages) by tag. 
-Useful for cleanup of pull request scoped images. 
+Delete older images from [Github Container Registry](https://github.com/features/packages) by tag regex. 
+Useful for keeping your package total size low. This action will delete all tagged packages that match the regex except the latest N packages `tagged-keep-latest`.
 
+This action will also clean up all untagged packaged except the latest N packages `untagged-keep-latest`.
 
 ## Usage 
 
-Example of workflow, that delete image when PR was closed.
+Example of workflow, that delete image on branch push.
 
 ```yaml
 name: '[RM] Preview'
 
 on:
-  pull_request:
-    types: [closed]
-
+  push:
+    branches:
+      - main
 jobs:
   purge-image:
     name: Delete image from ghcr.io
