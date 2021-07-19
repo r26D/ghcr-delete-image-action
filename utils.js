@@ -119,7 +119,7 @@ let findPackageVersionsTagRegexMatchOrderGreaterThan = async function (
     core.info(`🔎 found pkgVer ${pkgVer.metadata.container.tags}...`);
     const versionTags = pkgVer.metadata.container.tags;
     if (regex && versionTags.length > 0) { 
-      for (tag in versionTags) {
+      for (let tag of versionTags) {
         core.info(`🔎 found tag ${tag}...`);
 
         if (!regex.test(tag)) 
