@@ -150,7 +150,8 @@ let findPackageVersionsTagRegexMatchOrderGreaterThan = async function (
     core.info(`🔎  ${pkgs.length} tagged packages to delete. Taking top ${taggedKeepLatest}...`);
     const pkgToRemove = pkgs.slice(taggedKeepLatest);
     core.info(`🔎  ${pkgToRemove.length} tagged packages to delete...`);
-    pkgsToDelete.push.apply(pkgToRemove);
+    for (let pkg of pkgToRemove)
+      pkgsToDelete.push(pkg);
   }
   if (untaggedPkgs.length > 0) {
     core.info(`🔎  ${untaggedPkgs.length} untagged packages to delete. Taking top ${untaggedKeepLatest}...`);
