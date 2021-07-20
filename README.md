@@ -1,7 +1,7 @@
 # ghcr-delete-image
 
 Delete older images from [Github Container Registry](https://github.com/features/packages) by tag regex. 
-Useful for keeping your package total size low. This action will delete all tagged packages that match the regex except the latest N packages `tagged-keep-latest`.
+Useful for keeping your package total size low. This action will delete all tagged packages that match the regex except the latest N packages `tagged-keep-latest`. This will delete the package if ANY of the tags on the image match the regex.
 
 This action will also clean up all untagged packaged except the latest N packages `untagged-keep-latest`.
 
