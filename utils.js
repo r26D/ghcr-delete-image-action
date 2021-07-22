@@ -120,7 +120,7 @@ let iteratePackageVersions = async function* (octokit, owner, name) {
 };
 
 let deletePackageVersion = async (octokit, owner, name, versionId) => {
-  core.info(`deleting package ${name} - ${versionId}`);
+  core.info(`deleting package ${owner}/${name}:${versionId}`);
   await octokit.rest.packages.deletePackageVersionForOrg({
     package_type: "container",
     package_name: name,
