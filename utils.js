@@ -71,7 +71,7 @@ let findPackageVersionsTagRegexMatchOrderGreaterThan = async function (
         if (!regex.test(tag)) {
           continue;
         }
-        core.info(`🔎 tag ${tag} matches. Deleting...`);
+        core.info(`🔎 tag ${tag} matches. VersionId: ${pkgVer.id}. Deleting...`);
         pkgs.push(pkgVer);
         break;
       }
@@ -120,6 +120,7 @@ let iteratePackageVersions = async function* (octokit, owner, name) {
 };
 
 let deletePackageVersion = async (octokit, owner, name, versionId) => {
+  core.info(`deleting package ${name} - ${versionId}`);
   await octokit.rest.packages.deletePackageVersionForOrg({
     package_type: "container",
     package_name: name,
