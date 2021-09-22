@@ -26,7 +26,7 @@ jobs:
         with:
           owner: ${{ github.repository_owner }}
           name: ghcr-delete-image-dummy
-          token: ${{ secrets.GITHUB_TOKEN}}
+          token: ${{ secrets.GHCR_TOKEN}}
           tagged-keep-latest: 1
           untagged-keep-latest: 1
           tag-regex: testtag-.
