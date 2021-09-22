@@ -31,3 +31,10 @@ jobs:
           untagged-keep-latest: 1
           tag-regex: testtag-.
 ```
+
+
+This is based on original work from:
+
+https://github.com/machship/ghcr-delete-image-action 
+https://github.com/dmcconnell-m/ghcr-delete-image-action
+https://github.com/bots-house/ghcr-delete-image-action
