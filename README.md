@@ -22,11 +22,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Delete image
-        uses: ./
+	uses: r26d/ghcr-delete-image-action@v1.1.0
         with:
           owner: ${{ github.repository_owner }}
           name: ghcr-delete-image-dummy
-          token: ${{ secrets.GHCR_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN}}
           tagged-keep-latest: 1
           untagged-keep-latest: 1
           tag-regex: testtag-.
