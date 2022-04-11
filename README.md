@@ -30,6 +30,7 @@ jobs:
           tagged-keep-latest: 1
           untagged-keep-latest: 1
           tag-regex: testtag-.
+          ignore-missing-package: true
 ```
 
 

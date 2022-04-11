@@ -11,6 +11,7 @@ let getConfig = function () {
     token: core.getInput("token", { required: true }),
 
     untaggedKeepLatest: core.getInput("untagged-keep-latest") || null,
+    ignoreMissingPackage: core.getInput("ignore-missing-package") || false,
     taggedKeepLatest: core.getInput("tagged-keep-latest") || null,
     tagRegex: core.getInput("tag-regex") || null
   };
