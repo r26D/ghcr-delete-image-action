@@ -4,7 +4,6 @@ const core = require("@actions/core");
 
 async function deleteTagRegexMatchOrderGreaterThan(config, octokit) {
   core.info(`🔎 finding latest tagged ${config.taggedKeepLatest} packages matching regex ${config.tagRegex}. Also finding latest untagged ${config.untaggedKeepLatest} packages...`);
-   core.info(config)
 
     if (config.ignoreMissingPackage) {
       core.info(`🤓 ignoring missing package error`)
