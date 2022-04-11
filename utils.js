@@ -15,7 +15,7 @@ let getConfig = function () {
     untaggedOlderThan: core.getInput("untagged-older-than") || null,
     tagRegex: core.getInput("tag-regex") || null,
     taggedKeepLatest: core.getInput("tagged-keep-latest") || null,
-    ignoreMissingPackage: core.getInput("ignore-missing-package") === "true"
+    ignoreMissingPackage: `${core.getInput("ignore-missing-package")}` === "true"
   };
 
   const definedOptionsCount = [
