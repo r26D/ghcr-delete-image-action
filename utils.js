@@ -5,15 +5,17 @@ const core = require("@actions/core");
  * @returns Config
  */
 let getConfig = function () {
+
   const config = {
     owner: core.getInput("owner", { required: true }),
     name: core.getInput("name", { required: true }),
     token: core.getInput("token", { required: true }),
-
+    tag: core.getInput("tag"),
     untaggedKeepLatest: core.getInput("untagged-keep-latest") || null,
-    ignoreMissingPackage: core.getInput("ignore-missing-package") || false,
+    untaggedOlderThan: core.getInput("untagged-older-than") || null,
+    tagRegex: core.getInput("tag-regex") || null,
     taggedKeepLatest: core.getInput("tagged-keep-latest") || null,
-    tagRegex: core.getInput("tag-regex") || null
+    ignoreMissingPackage: core.getInput("ignore-missing-package") === "true"
   };
 
   const definedOptionsCount = [
@@ -23,9 +25,9 @@ let getConfig = function () {
     config.tagRegex
   ].filter((x) => x !== null).length;
 
-  if (definedOptionsCount == 0) {
-    throw new Error("no any required options defined");
-  }
+  // if (definedOptionsCount == 0) {
+  //   throw new Error("no any required options defined");
+  // }
   // else if (definedOptionsCount > 1) {
   //   throw new Error("too many selectors defined, use only one");
   // }

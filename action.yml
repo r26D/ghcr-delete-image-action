@@ -54,7 +54,6 @@ inputs:
   ignore-missing-package:
     description: >
       If the package is not found an error will be raised. If you set this to true then the error will be logged but ignored
-    default: false
     required: false
 runs:
   using: 'node12'

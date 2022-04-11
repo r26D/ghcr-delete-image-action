@@ -1,5 +1,6 @@
 const utils = require("./utils");
 const github = require("@actions/github");
+const core = require("@actions/core");
 
 let withEnv = (envs, cb) => {
   for (const k in envs) {
@@ -38,13 +39,38 @@ describe("getConfig", () => {
           name: "ghcr-delete-image-action",
           token: "some-token",
           tag: "latest",
+          tagRegex: null,
+          taggedKeepLatest: null,
           untaggedKeepLatest: null,
           untaggedOlderThan: null,
+          ignoreMissingPackage: false
         });
       }
     );
   });
+  test("sets it to ignore missing packages", () => {
+    withEnv(
+        {
+          ...sharedRequiredOpts,
+          INPUT_TAG: "latest",
+          "INPUT_IGNORE-MISSING-PACKAGE": true
+        },
+        () => {
 
+          expect(utils.getConfig()).toStrictEqual({
+            owner: "machship",
+            name: "ghcr-delete-image-action",
+            token: "some-token",
+            tag: "latest",
+            tagRegex: null,
+            taggedKeepLatest: null,
+            untaggedKeepLatest: null,
+            untaggedOlderThan: null,
+            ignoreMissingPackage: true
+          });
+        }
+    );
+  });
   test("throw error if no any required defined", () => {
     withEnv(
       {
