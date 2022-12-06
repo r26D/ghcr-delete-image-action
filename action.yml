@@ -56,5 +56,5 @@ inputs:
       If the package is not found an error will be raised. If you set this to true then the error will be logged but ignored
     required: false
 runs:
-  using: 'node12'
+  using: 'node16'
   main: 'dist/index.js'
