@@ -1,6 +1,4 @@
 const utils = require("./utils");
-const github = require("@actions/github");
-const core = require("@actions/core");
 
 let withEnv = (envs, cb) => {
   for (const k in envs) {

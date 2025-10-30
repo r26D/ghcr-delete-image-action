@@ -19,18 +19,19 @@ let getConfig = function () {
   };
 
   const definedOptionsCount = [
-    
     config.untaggedKeepLatest,
     config.taggedKeepLatest,
-    config.tagRegex
+    config.tagRegex,
+    config.untaggedOlderThan,
   ].filter((x) => x !== null).length;
 
-  // if (definedOptionsCount == 0) {
-  //   throw new Error("no any required options defined");
-  // }
-  // else if (definedOptionsCount > 1) {
-  //   throw new Error("too many selectors defined, use only one");
-  // }
+  if (!config.tag) {
+    if (definedOptionsCount == 0) {
+      throw new Error("no any required options defined");
+    } else if (definedOptionsCount > 1) {
+      throw new Error("too many selectors defined, use only one");
+    }
+  }
 
   if (config.untaggedKeepLatest) {
     if (
@@ -48,6 +49,14 @@ let getConfig = function () {
     }
     if (!config.tagRegex)
       throw new Error("regex must be provided when tagged-keep-latest set");
+  }
+
+  if (config.untaggedOlderThan) {
+    if (
+      isNaN((config.untaggedOlderThan = parseInt(config.untaggedOlderThan)))
+    ) {
+      throw new Error("untagged-older-than is not number");
+    }
   }
 
   return config;
