@@ -18,10 +18,11 @@ let getConfig = function () {
     ignoreMissingPackage: `${core.getInput("ignore-missing-package")}` === "true"
   };
 
+  // Count mutually-exclusive selectors. Note: tagRegex is not a selector by itself;
+  // it is a required companion to taggedKeepLatest.
   const definedOptionsCount = [
     config.untaggedKeepLatest,
     config.taggedKeepLatest,
-    config.tagRegex,
     config.untaggedOlderThan,
   ].filter((x) => x !== null).length;
 
